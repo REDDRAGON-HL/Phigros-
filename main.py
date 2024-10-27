@@ -2,7 +2,6 @@ import tkinter as tk
 import threading
 from tkinter import Toplevel, scrolledtext, END, font
 import pandas as pd
-
 from compute import *
 
 
