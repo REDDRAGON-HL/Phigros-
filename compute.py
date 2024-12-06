@@ -42,13 +42,13 @@ def cp(ljs, wl):
 # volume物量，target目标，noc情况数量，nocl情况列表，btf基础总分，cp连击分
 
 
-def score1(volume, target):
+def fscore1(volume, target):
     """常规算法"""
     noc = 0
     nocl = []
     dicz = {}  # 缓存中间结果
     
-    def score1_1(p, volume, target, noc, nocl, dicz={}):
+    def score1_1(noc, nocl, dicz):
         """常规算法计算部"""
         key = (p, volume, target)
         if key in dicz:
@@ -82,12 +82,12 @@ def score1(volume, target):
         if target < 500000:
             # 正算
             for p in range(volume + 1):
-                noc, nocl = score1_1(p, volume, target, noc, nocl, dicz)
+                noc, nocl = score1_1(noc, nocl, dicz)
         else:
             # 反算
             for i in range(volume + 1):
                 p = volume - i
-                noc, nocl = score1_1(p, volume, target, noc, nocl, dicz)
+                noc, nocl = score1_1(noc, nocl, dicz)
     
     except KeyboardInterrupt:
         print("\n运行终止，返回现有结果")
@@ -97,3 +97,72 @@ def score1(volume, target):
     print(nocl)
     return nocl
 
+
+def faccuracy1(volume, acc):
+    """常规算法"""
+    noc = 0
+    nocl = []
+    acc00 = acc / 100
+    
+    def accuracy1_1(noc):
+        """常规算法计算部"""
+        for g in range(volume - p):
+            m = volume - p - g
+            now_acc = rounding((p + g * 0.65) / volume, 4)
+            if now_acc == acc00:
+                noc += 1
+                print(f"P:{p},G:{g},M:{m}")
+                nocl.append(f"P:{p},G:{g},M:{m}")
+        return noc, nocl
+    
+    try:
+        if acc00 < 0.5:
+            # 正算
+            for p in range(volume + 1):
+                noc, nocl = accuracy1_1(noc)
+        else:
+            # 反算
+            for i in range(volume + 1):
+                p = volume - i
+                noc, nocl = accuracy1_1(noc)
+    
+    except KeyboardInterrupt:
+        print("\n运行终止，返回现有结果")
+    
+    print("-" * 50)
+    print(f"acc {acc}%\n{noc}种情况")
+    print(nocl)
+    return nocl
+
+
+def iaccuracy1(volume, acc1, acc2):
+    """常规算法"""
+    noc = 0
+    nocl = []
+    acc10 = acc1 / 100
+    acc20 = acc2 / 100
+    
+    def accuracy1_1(noc):
+        """常规算法计算部"""
+        for g in range(volume - p):
+            m = volume - p - g
+            now_acc = rounding((p + g * 0.65) / volume, 4)
+            show_acc = rounding(now_acc * 100, 4)
+            if acc10 <= now_acc <= acc20:
+                noc += 1
+                print(f"P:{p},G:{g},M:{m},acc:{show_acc}%")
+                nocl.append(f"P:{p},G:{g},M:{m},acc:{show_acc}%")
+        return noc, nocl
+    
+    try:
+        for i in range(volume + 1):
+            p = volume-i
+            noc, nocl = accuracy1_1(noc)
+    
+    except KeyboardInterrupt:
+        print("\n运行终止，返回现有结果")
+    
+    print("-" * 50)
+    print(f"{noc}种情况")
+    print(nocl)
+    return nocl
